@@ -1,0 +1,622 @@
+using System;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+//using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using TMPro;
+
+public class NewBehaviourScript : MonoBehaviour
+{
+    public CharacterController controller;
+    public Transform myCamera;
+    public Animator animator;
+    public bool USING = false;
+    public bool USINSISTEMPONTOGLOBALIZATIN = false;
+    public bool USINGTRES = false;
+    public bool USINGQUATRO = false;
+    public bool USINGCINCO = false;//->
+    public bool USINGSEIS = false;
+    public bool USINGSETE = false;
+    public bool USINGOITO = false;
+    public int contador = 0;
+    public int vidas = 3;
+    public TextMeshProUGUI vidasText;
+    public bool gameOverAtivado = false;
+    public bool fimDeJogo = false;
+    //public string usingSim = "using";
+    //public string usingNao = "";
+    public TextMeshProUGUI contadorText;//->
+    public GameObject UsingNao;
+    public GameObject UsingSim;
+    public int numCam;
+    public bool diego = false;
+    public bool finalDoJogo = false;
+
+    public GameObject Camera1;
+    public GameObject Camera2;//->
+
+    public GameObject UsingnaoDois;
+    public GameObject usingSimDois;
+
+    public GameObject usingNaoTres;
+    public GameObject usingSimTres;
+
+    public GameObject usingNaoQuatro;
+    public GameObject usingSimQuatro;
+
+    public GameObject usingNaoCinco;
+    public GameObject usingSimCinco;//->
+
+    public GameObject usingNaoSeis;
+    public GameObject usingSimSeis;
+
+    public GameObject usingNaoSete;
+    public GameObject usingSimSete;
+
+    public GameObject usingNaoOito;
+    public GameObject usingSimOito;
+
+    public GameObject diegoNao;
+    public GameObject diegoSim;
+
+    //CENARIOS
+    public GameObject comandos;
+    public string nomeDoCenarioUm;//Parei aqui
+    public string nomeDoCenarioDois;
+    public string nomeDoCenarioTres;
+    public string nomeDoCenarioQuatro;
+    public string nomeDoCenarioCinco;
+    public string nomeDoCenarioSeis;
+    public string nomeDoCenarioSete;
+    public string nomeDoCenarioOito;
+    public string nomeDoCenarioNove;
+    public string nomeDoCenarioDez;
+    public string menuDeFimDeJogo;
+    public string cenarioTesteUmPoaraoDois;
+    public string cenarioTesteDoisParaOTres;
+    public string cenerioTesteTresparaoDois;
+    public string cenarioTesteDoisParaoUm;
+    public string cenarioTesteTresParaOQuatro;
+    public string cenarioTesteQuatroParaOCinco;
+    public string cenarioTesteCincoParaoSeis;
+    public string cenarioTesteSeisParaOSete;
+    public string cenarioTesteSeteParaOOito;
+    public string cenarioTesteOitoParaONove;
+    public string cenarioTesteNoveParaODez;
+    public string cenarioTesteDezParaOOnze;
+    public string cenarioTesteOnzeParaODoze;
+    public string cenarioTesteDozeParaOMenuFinal;
+    public string GameOver;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        
+        myCamera = Camera.main.transform;
+        animator = GetComponent<Animator>();
+
+        
+        USING = false;
+        USINSISTEMPONTOGLOBALIZATIN = false;
+        USINGTRES = false;
+        USINGQUATRO = false;//->
+        USINGCINCO = false;
+        USINGSEIS = false;
+        USINGSETE = false;
+        USINGOITO = false;
+        fimDeJogo = false;
+        diego = false;
+        finalDoJogo = false;
+        contador = 0;//->
+        //pontos = 0;
+        vidas = 3;
+        gameOverAtivado = false;
+        Debug.Log(USING);
+        Debug.Log(USINSISTEMPONTOGLOBALIZATIN);
+        Debug.Log(USINGTRES);
+        Debug.Log(USINGQUATRO);
+        Debug.Log(USINGCINCO);
+        Debug.Log(USINGSEIS);//->
+        Debug.Log(USINGSETE);
+        Debug.Log(USINGOITO);
+        Debug.Log(contador);
+        ContadorText();
+        VidasText();
+
+    }
+
+    // Update is called once per frame
+    void Update()//->
+    {
+        //if (vidas <= 3)
+        //{
+            //vidas--;
+            //SceneManager.LoadScene(GameOver);
+        //}
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, 0);
+        movimento.y = 0;
+        movimento = myCamera.TransformDirection(movimento); 
+        controller.Move(movimento * Time.deltaTime * 5);
+        controller.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
+        transform.rotation = Quaternion.LookRotation(movimento);//->
+        if (movimento != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movimento), Time.deltaTime * 10);
+        }
+        animator.SetBool("Mover", movimento != Vector3.zero);
+
+        //SAIDA DE DADOS
+        //USING UM
+        if (USING == false)
+        {
+            //usingText.text = "" + usingNao;
+            UsingNao.SetActive(true);
+            UsingSim.SetActive(false);
+
+
+        }
+        if (USING == true)
+        {
+            //usingText.text = "SIM" + usingSim;
+            UsingNao.SetActive(false);//->
+            UsingSim.SetActive(true);
+        }
+        //USING DOIS
+        if (USINSISTEMPONTOGLOBALIZATIN == false)
+        {
+            //usingText.text = "" + usingNao;
+            UsingnaoDois.SetActive(true);
+            usingSimDois.SetActive(false);
+
+
+        }
+        if (USINSISTEMPONTOGLOBALIZATIN == true)
+        {
+            //usingText.text = "SIM" + usingSim;
+            UsingnaoDois.SetActive(false);
+            usingSimDois.SetActive(true);
+        }
+        //USINGTRES
+        if (USINGTRES == false)
+        {
+            usingNaoTres.SetActive(true);
+            usingSimTres.SetActive(false);
+        }
+        if (USINGTRES == true)
+        {
+            usingNaoTres.SetActive(false);
+            usingSimTres.SetActive(true);
+        }
+        //USINGQUATRO
+        if (USINGQUATRO == false)
+        {
+            usingNaoQuatro.SetActive(true);
+            usingSimQuatro.SetActive(false);
+        }
+        if (USINGQUATRO == true)
+        {
+            usingNaoQuatro.SetActive(false);
+            usingSimQuatro.SetActive(true);
+        }
+        //USING CINCO
+        if (USINGCINCO == false)
+        {
+            usingNaoCinco.SetActive(true);
+            usingSimCinco.SetActive(false);
+        }
+        if (USINGCINCO == true)
+        {
+            usingNaoCinco.SetActive(false);
+            usingSimCinco.SetActive(true);
+        }
+        //USINGSEIS
+        if (USINGSEIS == false)
+        {
+            usingNaoSeis.SetActive(true);
+            usingSimSeis.SetActive(false);
+        }
+        if (USINGSEIS == true)
+        {
+            usingSimSeis.SetActive(true);
+            usingNaoSeis.SetActive(false);
+        }
+        //USING SETE
+        if (USINGSETE == false)
+        {
+            usingNaoSete.SetActive(true);
+            usingSimSete.SetActive(false);
+        }
+        if (USINGSETE == true)
+        {
+            usingNaoSete.SetActive(false);
+            usingSimSete.SetActive(true);
+        }
+        //USINGOITO
+        if (USINGOITO == false)
+        {
+            usingNaoOito.SetActive(true);
+            usingSimOito.SetActive(false);
+        }
+        if (USINGOITO == true)
+        {
+            usingNaoOito.SetActive(false);
+            usingSimOito.SetActive(true);
+        }
+        if (diego == true)
+        {
+            diegoNao.SetActive(false);
+            diegoSim.SetActive(true);
+        }
+    }
+    public void ChangeCamera(int numCam)
+    {
+        Camera1.SetActive(false);
+        Camera2.SetActive(false);
+
+        if (numCam == 1)
+        {
+            Camera1.SetActive(true);
+        }
+        else if (numCam == 2)
+        {
+            Camera2.SetActive(true);
+        }
+
+
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        //ABRE AS PORTAS
+        if (other.CompareTag("AbrirPorta"))//Abre a PortaUm
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioUm);
+            }
+        }
+        if (other.CompareTag("AbrirPortaDois"))//Abre a PortaDois
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioDois);
+            }
+        }
+        if (other.CompareTag("AbrirPortaTres"))//Abre a PortaTres
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioTres);
+            }
+        }
+        if (other.CompareTag("AbrirPortaQuatro"))//Abre a PortaQuatro
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioQuatro);
+            }
+        }
+        if (other.CompareTag("AbrirPortaCinco"))//Abre a PortaCinco
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioCinco);
+            }
+        }
+        if (other.CompareTag("AbrirPortaSeis"))//Abre a PortaSeis
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioSeis);
+            }
+        }
+        if (other.CompareTag("AbrirPortaSete"))//Abre a PortaSete
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioSete);
+            }
+        }
+        if (other.CompareTag("AbrirPortaOito"))//Abre a PortaOito
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioOito);
+            }
+        }
+        if (other.CompareTag("AbrirPortaNove"))//Abre a PortaNove
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioNove);
+            }
+        }
+        if (other.CompareTag("AbrirPortaDez"))//Abre a portaDez
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(nomeDoCenarioDez);
+            }
+        }
+        //CENARIOTESTE IR
+        if (other.CompareTag("IrParaOCenarioDois"))//1/2
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO == true)
+            {
+                if (vidas >= 3)
+                {
+                    SceneManager.LoadScene(cenarioTesteUmPoaraoDois);
+                }
+                if (vidas < 3)
+                {
+                    SceneManager.LoadScene("CenarioTesteDois");
+                }
+            }
+            
+        }
+        if (other.CompareTag("IrParaOCenarioTres"))//2/3
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteDoisParaOTres);
+            }
+            
+        }
+        if (other.CompareTag("IrParaOQuatro"))//3/4
+        {
+            if (USING == true)
+            {
+                SceneManager.LoadScene(cenarioTesteTresParaOQuatro);
+            }
+            
+        }
+        if (other.CompareTag("IrParaOCinco"))//4/5
+        {
+            if (USING == true)
+            {
+                SceneManager.LoadScene(cenarioTesteQuatroParaOCinco);
+            }
+        }
+        
+            
+            
+        if (other.CompareTag("IrParaOSeis"))//5/6
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteCincoParaoSeis);
+            }
+            
+        }
+        if (other.CompareTag("IrparaOSete"))//6/7
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteSeisParaOSete);
+            }
+            
+        }
+        if (other.CompareTag("IrParaOOito"))//7/8
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteSeteParaOOito);
+            }
+            
+        }
+        if (other.CompareTag("IrParaONove"))//8/9
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteOitoParaONove);
+            }
+            
+        }
+        if (other.CompareTag("IrParaoDez"))//9/10
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteNoveParaODez);
+            }
+            
+        }
+        if (other.CompareTag("IrParaoOnze"))//10/11
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE == true)
+            {
+                SceneManager.LoadScene(cenarioTesteDezParaOOnze);
+            }
+            
+        }
+        if (other.CompareTag("IrParaoDoze"))//11/12
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGOITO == true)
+            {
+                SceneManager.LoadScene(cenarioTesteOnzeParaODoze);
+            }
+            
+        }
+        if (other.CompareTag("IrParaOMenuFinal"))//12/MenuFinal
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS == true)
+            {
+                SceneManager.LoadScene(cenarioTesteDozeParaOMenuFinal);
+            }
+        }
+
+        
+        //CENARIOTESTE VOLTAR
+        if (other.CompareTag("VoltarParaOCenarioDois"))
+        {
+            SceneManager.LoadScene(cenerioTesteTresparaoDois);
+        }
+        if (other.CompareTag("VoltarParaOCenarioUm"))
+        {
+            SceneManager.LoadScene(cenarioTesteDoisParaoUm);
+        }
+        //if (other.CompareTag("AbrirPortaOnze"))
+        //{
+            //if (finalDoJogo == true)
+            //{
+                //other.gameObject.SetActive(false);
+                //SceneManager.LoadScene(menuDeFimDeJogo);
+            //}
+        //}
+        if (other.CompareTag("FinaldoJogo"))//Abre a PortaOnze/FimDoJogo
+        {
+            if (finalDoJogo == true)
+            {
+                //finalDoJogo = true;
+                Debug.Log(finalDoJogo);
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(menuDeFimDeJogo);
+            }
+        }
+        //PEGA OS ITENS
+        if (other.CompareTag("UsingPego"))//Pega Using Um
+        {
+            USING = true;
+            //pontos += 5;
+            contador ++;
+            Debug.Log(USING);
+            other.gameObject.SetActive(false);
+            //Debug.Log(USING);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingDoisPego"))//Pega Using Dois
+        {
+            USINSISTEMPONTOGLOBALIZATIN = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINSISTEMPONTOGLOBALIZATIN);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingTresPego"))//Pega o using Tres
+        {
+            USINGTRES = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGTRES);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingQuatroPego"))//Pega o usijng Quatro
+        {
+            USINGQUATRO = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGQUATRO);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingCincoPego"))//Pega o using Cinco
+        {
+            USINGCINCO = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGCINCO);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingSeisPego"))//Pega o using Seis
+        {
+            USINGSEIS = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGSEIS);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingSetPego"))//Pega o usinf Sete
+        {
+            USINGSETE = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGSETE);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+        if (other.CompareTag("UsingOitoPego"))//Pega o usingOito
+        {
+            USINGOITO = true;
+            contador++;
+            //pontos += 5;
+            Debug.Log(USINGOITO);
+            other.gameObject.SetActive(false);
+            ContadorText();
+            //PontosText();
+        }
+
+        if (other.CompareTag("FinaldoJogo"))//Pega o FinalDoJogo
+        {
+            if (USING & USINSISTEMPONTOGLOBALIZATIN & USINGTRES & USINGQUATRO & USINGCINCO & USINGSEIS & USINGSETE & USINGOITO == true)
+            {
+                fimDeJogo= true;
+                other.gameObject.SetActive(false);
+                SceneManager.LoadScene(menuDeFimDeJogo);
+                ContadorText();
+            }
+            
+        }
+        if (other.CompareTag("Diego"))
+        {
+            diego = true;
+            other.gameObject.SetActive(false);
+            ContadorText();
+        }
+        if (other.CompareTag("TrocarCamera"))
+        {
+            ChangeCamera(numCam);
+        }
+        //TELA DE GAME OVER
+        if (other.CompareTag("GameOver"))//vai para a tela de Game Over
+        {
+            gameOverAtivado = true;
+            //if (gameOverAtivado == true)
+            //{
+                //vidas--;
+            //SceneManager.LoadScene(GameOver);
+            vidas--;
+            VidasText();
+            //}
+            if (vidas <= 0)
+            {
+                SceneManager.LoadScene(GameOver);
+            }
+
+
+        }
+    }
+    //INTERFACE GRAFICA
+    public void ContadorText()
+    {
+        contadorText.text = "Letras: " + contador.ToString("F0");
+    }
+    public void VidasText()
+    {
+        vidasText.text = "Vidas: " + vidas.ToString("F0");
+    }
+
+}
