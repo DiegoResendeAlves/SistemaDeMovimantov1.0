@@ -1,0 +1,97 @@
+import pygame
+from random import randint
+pygame.init()
+x = 198# Posiçaõ Carrinho 1
+y = 315
+
+a = 350# Posicao Carrinho 2
+b = -290
+
+c = 90# Posicao Carrinho 3
+d = 290
+
+e = 230# Posicao Carrinho 4
+f = -10
+
+y1 = -50
+y2 = -50
+
+fundox = 0
+fundoy = -25
+
+v = 10# Velocidades dos Carrinhos
+v1 = -15
+v2 = -4
+v3 = -3
+v4 = -5
+v5 = -4
+velocidadePista = -20
+tel = 527
+tel1 = 0
+
+janela = pygame.display.set_mode((1096, 400))
+fundo = pygame.image.load("MontanhaUm.jpg")
+fundo = pygame.transform.scale(fundo, (640 * 1, 640 * 1))
+carro = pygame.image.load("TijoloUm.jpg")
+carro = pygame.transform.scale(carro, (250//5,250//5))
+carroDois = pygame.image.load("TijoloUm.jpg")
+carroDois = pygame.transform.scale(carroDois, (1096//15, 1096//15))
+carroTres = pygame.image.load("TijoloUm.jpg")
+carroTres = pygame.transform.scale(carroTres, (1096//15, 1096//15))
+carroQuatro = pygame.image.load("TijoloUm.jpg")
+carroQuatro = pygame.transform.scale(carroQuatro, (1096//15, 1096//15))
+pistaUm = pygame.image.load("movimentoUm.png")
+pistaDois = pygame.image.load("PretoUm.jpg")
+pistaUm = pygame.transform.scale(pistaUm, (360//10, 360//10))
+pistaDois = pygame.transform.scale(pistaUm, (360//10, 360//10))
+telaPreta = pygame.image.load("TijoloUm.jpg")
+telaPreta = pygame.transform.scale(telaPreta, (360*2, 360*2))
+
+pygame.display.set_caption("ParedeMania")
+
+janelaAberta = True
+while janelaAberta:
+    pygame.time.delay(50)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            janelaAberta = False
+    comnandos = pygame.key.get_pressed()
+    #if comnandos[pygame.K_UP]:
+        #y -= v
+
+
+    #if comnandos[pygame.K_DOWN]:
+        #y += v
+
+    if comnandos[pygame.K_RIGHT] and x <= 466:
+        x += v
+
+
+    if comnandos[pygame.K_LEFT] and x >= 10:
+        x -= v
+
+    y1 -= v1
+    b -= v2
+    d -= v3
+    f -= v4
+    if (y1 >= 700):# Carrinho 1
+        y1 = randint(-150,-50)
+    if (b >= 420):# Carrinho 2
+        b = randint(-50,-20)
+    if (d >= 430):
+        d = randint(-50,-20)
+    if (f >= 425):
+        f = randint(-50,-20)
+    if (fundoy >= -25):
+        fundoy = v5
+    janela.blit(fundo,(0,fundoy))
+    janela.blit(carro, (x, y))
+    janela.blit(carroDois, (a,b))
+    janela.blit(carroTres,(c,d))
+    janela.blit(carroQuatro, (e,f))
+    janela.blit(pistaUm,(490,y1))
+    janela.blit(pistaDois, (500,y2))
+    janela.blit(telaPreta, (tel,tel1))
+    pygame.display.update()
+
+pygame.quit()
