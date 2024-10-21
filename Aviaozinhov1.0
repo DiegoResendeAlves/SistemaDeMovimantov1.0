@@ -1,0 +1,160 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
+
+public class Player : MonoBehaviour
+{
+    public CharacterController controller;
+    public Transform myCamera;
+    public Animator animator;
+    public Rigidbody bulletPrefab;
+    public float bulletspeed = 50;
+    public Transform bulletSpawnPoint;
+    public int contador = 85;
+    public int vida = 104;
+    public int palavras = 0;
+    public TextMeshProUGUI contadorText;
+    public TextMeshProUGUI vidaText;
+    public TextMeshProUGUI palavrasText;
+    public bool passarDeFase = false;
+
+    public string UmParaoDois;
+    public string doisParaOTres;
+    public string tresParaoQuatro;
+    public string quatroparaoCinco;
+    public string cincoparaoSeis;
+    public string seisParaoSete;
+    public string seteparaoOito;
+    public string gameOver;
+    public string gameOverBalas;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+
+        myCamera = Camera.main.transform;
+        animator = GetComponent<Animator>();
+        contador = 85;
+        vida = 104;
+        palavras = 0;
+        passarDeFase = false;
+        PontosText();
+        PalavrasText();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, 0);
+        movimento.y = 0;
+        movimento = myCamera.TransformDirection(movimento);
+        controller.Move(movimento * Time.deltaTime * 30);
+        controller.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
+        //transform.rotation = Quaternion.LookRotation(movimento);
+        //if (movimento != Vector3.zero)
+        //{
+        // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movimento), Time.deltaTime * 10);
+        //}
+        //animator.SetBool("Mover", movimento != Vector3.zero);
+        if (Input.GetKeyDown(KeyCode.Space))
+        //if(Input.GetButton(Space))
+        {
+            contador--;
+            vida--;
+            //palavras++;
+            //other.gameObject.SetActive(false);
+            PontosText();
+            VidaText();
+            //PalavrasText();
+            Debug.Log("ATIROU!");
+            Rigidbody newbullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
+            newbullet.velocity = new Vector3(0, 0, bulletspeed);
+        }
+        if (contador <= 0)
+        {
+            SceneManager.LoadScene("GameOverBalas");//Tiro acabou
+        }
+        /*if (passarDeFase == true)//CENARIO UM PARA O DOIS
+        {
+            SceneManager.LoadScene(UmParaoDois);
+        }
+        if (contador >= 104)//CENARIO DOIS PARA O TRES
+        {
+            SceneManager.LoadScene(doisParaOTres);
+        }
+        if (contador >= 104)//CENARIO TRES PARA O QUATRO
+        {
+            SceneManager.LoadScene(tresParaoQuatro);
+        }
+        if (contador >= 104)//CENARIO QUATRO PARA O CINCO
+        {
+            SceneManager.LoadScene(quatroparaoCinco);
+        }
+        if (contador >= 104)//CENARIO CINCO PARA O SEIS
+        {
+            SceneManager.LoadScene(cincoparaoSeis);
+        }
+        if (contador >= 104)//CENARIO SEIS PARA O SETE
+        {
+            SceneManager.LoadScene(seisParaoSete);
+        }
+        if (contador >= 104)//CENARIO SETE PARA O OITO
+        {
+            SceneManager.LoadScene(seteparaoOito);
+        }*/
+    }
+    //CONTA OS INIMIGOS
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle"))//PONTOS//DEU ERRADO!
+        {
+            //contador++;
+            palavras++;
+            other.gameObject.SetActive(false);
+            //PontosText();
+            PalavrasText();
+        }
+        if (other.CompareTag("Obstacle"))//DIMINUI AS BALAS
+        {
+            Debug.Log("ENTROU NO METODO!");
+            contador--;
+            //vida--;
+            PontosText();
+            //VidaText();
+
+        }
+        if (other.CompareTag("Obstacle"))
+        {
+            vida--;
+            VidaText();
+        }
+        if (other.CompareTag("PedraAtingida"))//Fase 1
+        {
+            SceneManager.LoadScene(gameOver);
+        }
+        if (other.CompareTag("TijoloAtingido"))//Fase 2
+        {
+            SceneManager.LoadScene(gameOver);
+        }
+    }
+    //CONTA PONTOS
+    public void PontosText()
+    {
+        contadorText.text = "BALAS: " + contador.ToString();
+    }
+    //VIDA DO PLAYER
+    public void VidaText()
+    {
+        vidaText.text = "VIDA: " + vida.ToString();
+    }
+    //ITENS PEGOS PELO JOGADOR
+    public void PalavrasText()
+    {
+        palavrasText.text = "PALAVRAS: " + palavras.ToString();
+    }
+}
