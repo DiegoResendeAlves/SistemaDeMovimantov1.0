@@ -1,0 +1,124 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine;
+
+public class MovimentoDaEricaB : MonoBehaviour
+{
+    public CharacterController controller;
+    public float velocidadedaErica = 3;
+    public Animator animator;
+    //public BarraDeVidaH barra;
+    //public int vida = 100;
+    public bool vidaPega = false;
+    public Image verde;
+    public Image vermelha;
+    public int vidamaxima = 100;
+    //public int vidaAtual;
+    public Slider slider;
+    //PlayerBehaviour player;
+    //public int vida = 100;
+    public int  vidaAtual;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        //slider.value = vida;
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        vidaAtual = vidamaxima;
+        if (slider != null)
+        {
+            slider.maxValue = vidamaxima;
+            slider.value = vidamaxima;
+        }
+        /*void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("PerdeVida"))
+            {
+                vida = vida - 5;
+            }
+            if (other.CompareTag("GanhaVida"))
+            {
+                vida = vida + 5;
+            }
+        }*/
+
+    } 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        //slider.value = vida;
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        controller.Move(movimento * Time.deltaTime * velocidadedaErica);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+        
+    }
+    
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("PerdeVida"))//Diminui a vida do player
+        {
+            TakeDamage(10);
+            //vida -= 10;
+            //barra.AlteraVida(vida);
+        }
+        if (other.CompareTag("GanhaVida"))//Almenta a vida do player
+        {
+            GanhaVida(10);
+            //vida += 50;
+            //barra.AlteraVida(vida);
+        }
+    }
+    public void TakeDamage(int damage)//DIMINUI
+    {
+        vidaAtual -= damage;
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidamaxima); // Garante que a vida esteja entre 0 e o máximo
+        Debug.Log("Vida atual: " + vidaAtual);
+
+        UpdateHealthBar();
+
+        if (vidaAtual <= 0)
+        {
+            Debug.Log("O jogador morreu!");
+        }
+    }
+    private void UpdateHealthBar()
+    {
+        if (slider != null)
+        {
+            slider.value = vidaAtual;
+        }
+    }
+    public void GanhaVida(int almenta)//Almenta
+    {
+        vidaAtual += almenta;
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidamaxima); // Garante que a vida esteja entre 0 e o máximo
+        Debug.Log("Vida atual: " + vidaAtual);
+
+        UpdateHealthBar();
+
+        if (vidaAtual >= 100)
+        {
+            Debug.Log("O personagem está completamente curado!");
+        }
+    }
+    public void UpdateHealthBar2()
+    {
+        if (slider != null)
+        {
+            slider.value = vidaAtual;
+        }
+    }
+}
