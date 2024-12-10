@@ -1,0 +1,92 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+public class MovimentoDaEricaI2 : MonoBehaviour
+{
+    public CharacterController controller;
+    public float velocidadeDaErica = 3;
+    public Animator animator;
+    public Slider slider;
+    public int vidaMaxima = 100;
+    public int vidAtual;
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        vidAtual = vidaMaxima;
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        controller.Move(movimento * Time.deltaTime * velocidadeDaErica);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+    }
+    public void OnTriggerEnter(Collider other)//Interage
+    {
+        if (other.CompareTag("PerdeVida"))
+        {
+            PerdeVida(30);
+        }
+        if (other.CompareTag("GanhaVida"))
+        {
+            GanhaVida(30);
+        }
+    }
+    public void PerdeVida(int dano)//Perde
+    {
+        vidAtual -= dano;
+        vidAtual = Mathf.Clamp(vidAtual, 0, vidaMaxima);
+        AtualizaVida1();
+        Debug.Log("Vida atual: " + vidAtual);
+        if (vidAtual <= 0)
+        {
+            Debug.Log("O jogador morreu!");
+        }
+    }
+    public void GanhaVida(int ganha)//Ganha
+    {
+        vidAtual += ganha;
+        vidAtual = Mathf.Clamp(vidAtual, 0, vidaMaxima);
+        AtualizaVida2();
+        Debug.Log("Vida atual: " + vidAtual);
+        if (vidAtual >= 30)
+        {
+            Debug.Log("O jogador foi curado");
+        }
+        if (vidAtual >= 100)
+        {
+            Debug.Log("O jogador está completamente curado!");
+        }
+    }
+    public void AtualizaVida1()//1
+    {
+        if (slider != null)
+        {
+            slider.value = vidAtual;
+        }
+    }
+    public void AtualizaVida2()//2
+    {
+        if (slider != null)
+        {
+            slider.value = vidAtual;
+        }
+    }
+}
