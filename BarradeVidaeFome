@@ -1,0 +1,161 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
+public class MovimentoDaEricaJ : MonoBehaviour
+{
+    public CharacterController controller;
+    public float velocidadeDaAline = 3;
+    public Animator animator;
+    public Slider slider;
+    public Slider sliderFome;
+    public int vidaMaxima = 100;
+    public int semFome = 100;
+    public int semFomeAtual;
+    public int vidaAtual;
+    public string GameOver;
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        vidaAtual = vidaMaxima;
+        semFomeAtual = semFome;
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        controller.Move(movimento * Time.deltaTime * velocidadeDaAline);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("PerdeVida"))
+        {
+            PerdeVida(30);
+        }
+        if (other.CompareTag("GanhaVida"))
+        {
+            GanhaVida(30);
+        }
+        //Fome
+        if (other.CompareTag("ComFome"))
+        {
+            ComFome(30);
+        }
+        if (other.CompareTag("SemFome"))
+        {
+            SemFome(30);
+        }
+    }
+    //VIDA
+    public void PerdeVida(int dano)//Perde
+    {
+        vidaAtual -= dano;
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+        AtualizaVida1();
+        Debug.Log("Vida atual: " + vidaAtual);
+        if (vidaAtual <= 0)
+        {
+            SceneManager.LoadScene(GameOver);
+            Debug.Log("O jogador morreu!");
+        }
+    }
+    public void GanhaVida(int ganha)//Ganha
+    {
+        vidaAtual += ganha;
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+        AtualizaVida2();
+        Debug.Log("Vida atual: " + vidaAtual);
+        if (vidaAtual >= 30)
+        {
+            Debug.Log("O jogador está curado!");
+        }
+        if (vidaAtual >= 100)
+        {
+            Debug.Log("o jogador está completamente curado!");
+        }
+    }
+    public void AtualizaVida1()//1
+    {
+        if (slider != null)
+        {
+            slider.value = vidaAtual;
+        }
+    }
+    public void AtualizaVida2()//2
+    {
+        if (slider != null)
+        {
+            slider.value = vidaAtual;
+        }
+    }
+    //FOME
+    public void ComFome(int dano1)//Perde
+    {
+        semFomeAtual -= dano1;
+        semFomeAtual = Mathf.Clamp(semFomeAtual, 0, semFome);
+        AtualizaFome1();
+        Debug.Log("Fome atual: " + semFomeAtual);
+        if (semFomeAtual <= 0)
+        {
+            AtualizaMortedeFome();
+            //vidaAtual = vidaMaxima - 100;
+            Debug.Log("O jogador morreu de fome!");
+        }
+    }
+    public void SemFome(int ganha1)//Ganha
+    {
+        semFomeAtual += ganha1;
+        semFomeAtual = Mathf.Clamp(semFomeAtual, 0, semFome);
+        AtualizaFome2();
+        Debug.Log("Fome atual: " + semFome);
+        if (vidaAtual >= 30)
+        {
+            Debug.Log("O jogador não está com fome!");
+        }
+        if (vidaAtual >= 100)
+        {
+            Debug.Log("o jogador está completamente sem fome!");
+        }
+    }
+    public void AtualizaFome1()//1
+    {
+        if (sliderFome != null)
+        {
+            sliderFome.value = semFomeAtual;
+        }
+    }
+    public void AtualizaFome2()//2
+    {
+        if (sliderFome != null)
+        {
+            sliderFome.value = semFomeAtual;
+        }
+    }
+    public void AtualizaMortedeFome()
+    {
+        if (sliderFome != null)
+        {
+            vidaAtual = vidaMaxima - 100;
+            slider.value = vidaAtual;
+            SceneManager.LoadScene(GameOver);
+            Debug.Log("Chamou esse metodo!");
+        }
+    }
+}
