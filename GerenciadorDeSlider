@@ -1,0 +1,79 @@
+Sistema Um:
+
+public class SliderCama : MonoBehaviour//Sistema Slider 1
+{
+    public Slider sliderCamab;
+    public Slider sliderMesa;
+    public Slider sliderbiblioteca;
+    //public float vidaMaxima = 100;
+    //public float vidaAtual;
+    // Start is called before the first frame update
+    void Start()
+    {
+        //vidaAtual = vidaMaxima;
+        //Nao uso
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //Nao uso
+    }
+    public void AlteraVida(float vida)//Altera a vida do player
+    {
+        sliderCamab.value = vida;
+
+    }
+    public void AlteraSliderMesa(float estudar)//O player estuda
+    {
+        sliderMesa.value = estudar;
+    }
+    public void Alterasliderbiblioteca(float pegarLivro)//O player pega o livro
+    {
+        sliderbiblioteca.value = pegarLivro;
+    }
+}
+
+Sistema 2
+
+using UnityEngine.UI;
+using UnityEngine;
+
+public class BarraDeVida : MonoBehaviour//Sistema Slider 2
+{
+    public SliderCama cama; // Referência ao sistema 1
+    public float vida = 0;
+    public float estudar = 0;
+    public float pegarLivro = 0;
+    public float vidaMaxima = 100;
+    public float estudomaximo = 100;
+    public float pegarlivromaximo = 100;
+    public string voltaParaOQuarto;
+
+    void Start()
+    {
+        vida = 0;
+        estudar = 0;
+        pegarLivro = 0;
+    }
+
+    void FixedUpdate()
+    {
+        // Verifica se a tecla Espaço está pressionada
+        if (Input.GetKey(KeyCode.Space))
+        {
+            // Incrementar o Slider da cama
+            vida += 0.2f;
+            vida = Mathf.Clamp(vida, 0, vidaMaxima);
+            cama.AlteraVida(vida); // Atualiza o valor do Slider
+
+            // Se o Slider da cama atingir o máximo, muda de cena
+            if (vida >= vidaMaxima)
+            {
+                SceneManager.LoadScene(voltaParaOQuarto);
+            }
+
+            // Opcional: Adicione condições para os outros sliders, se necessário
+        }
+    }
+}
