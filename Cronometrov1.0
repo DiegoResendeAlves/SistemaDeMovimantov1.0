@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+public class Cronometro : MonoBehaviour
+{
+    public TextMeshProUGUI cronometroText; // Referência ao texto do TextMeshPro
+    public float tempo = 06f;  // Tempo inicial do cronômetro
+    public bool contandoParaFrente = true; // Define se o tempo aumenta ou diminui
+
+    void Update()
+    {
+        if (contandoParaFrente)
+        {
+            // Cronômetro aumentando
+            tempo += Time.deltaTime;
+        }
+        else
+        {
+            // Cronômetro diminuindo
+            tempo -= Time.deltaTime;
+
+            // Impede que o cronômetro fique negativo
+            if (tempo < 0)
+                tempo = 0;
+        }
+
+        // Atualiza o texto com o tempo formatado
+        AtualizarTexto();
+    }
+
+    public void AlternarContagem()
+    {
+        // Alterna entre aumentar e diminuir o tempo
+        contandoParaFrente = !contandoParaFrente;
+    }
+
+    private void AtualizarTexto()
+    {
+        int minutos = Mathf.FloorToInt(tempo / 60);
+        int segundos = Mathf.FloorToInt(tempo % 60);
+        cronometroText.text = string.Format("{0:00}:{1:00}", minutos, segundos);
+    }
+}
