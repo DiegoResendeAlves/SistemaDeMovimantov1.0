@@ -1,0 +1,94 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+public class MovimentoDaEricaD3 : MonoBehaviour
+{
+    public CharacterController controller;
+    public Animator animator;
+    public int moeda = 0;
+    public int moedaAtual;
+    public TextMeshProUGUI moedaText;
+    public TextMeshProUGUI jogoSalvoText;
+    public TextMeshProUGUI jogoCarregadoText;
+    public TextMeshProUGUI saveDeletadoText;
+    // Start is called before the first frame update
+    void Start()
+    {
+        //CarregarMoedas();
+        //SalvarMoedas();
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        //moeda = 0;
+        //PlayerPrefs.Load();
+        //Debug.Log(PlayerPrefs.GetInt("moeda"));
+        moedaAtual = moeda;
+        //moedaAtual = PlayerPrefs.GetInt("moeda");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        //movimento = myCamera.TransformDirection(movimento);
+        controller.Move(movimento * Time.deltaTime * 3);
+        controller.Move(new Vector3(0, -9.81f, 0) * Time.deltaTime);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))//Salvar
+        {
+            SaveGame();
+        }
+        if (Input.GetKeyDown(KeyCode.X))//Carregar
+        {
+            LoadGame();
+        }
+        if (Input.GetKeyDown(KeyCode.C))//Deletar
+        {
+            DeleteSave();
+        }
+    }
+    public void OnTriggerEnter(Collider other)//Pega as moedas
+    {
+        if (other.CompareTag("MoedaPega"))
+        {
+            moeda++;
+            other.gameObject.SetActive(false);
+            MoedaText();
+        }
+    }
+    public void SaveGame()//Salva o jogo
+    {
+        PlayerPrefs.SetInt("moeda", moeda);
+        PlayerPrefs.Save();
+        Debug.Log("Jogo salvo com sucesso!");
+    }
+    public void LoadGame()//Carrega o jogo
+    {
+        moeda = PlayerPrefs.GetInt("moeda");
+        Debug.Log("Jogo carregado com sucesso!");
+        MoedaText();
+    }
+    public void DeleteSave()//Deleta o save
+    {
+        PlayerPrefs.DeleteAll();
+        Debug.Log("Save deletado com sucesso!");
+        moeda = 0;
+        MoedaText();
+    }
+    public void MoedaText()//Interace grafica
+    {
+        moedaText.text = "MOEDAS: " + moeda.ToString();
+    }
+}
