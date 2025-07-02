@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+//using UnityEngine.UI;
+using TMPro;
+
+public class Bola : MonoBehaviour
+{
+    public bool vaiParaADireita;
+    public float velocidade;
+    public Transform pontoDireita;
+    public Transform pontoEsquerda;
+    public int pontos = 0;
+    public TextMeshProUGUI pontosText;
+    //public Text pontosUmText;
+    public string GameOver;
+    public AudioClip musica;
+    private AudioSource audioSource;
+    // Start is called before the first frame update
+    void Start()
+    {
+        //pontos = 0;
+        ContadorDePontos();
+        audioSource = gameObject.AddComponent<AudioSource>();
+        //audioSource.clip = musica;
+        audioSource.clip = musica;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //VAI PARA A DIREITA
+        if (vaiParaADireita)
+        {
+            transform.Translate(Vector2.right * velocidade * Time.deltaTime);
+        }
+        //VAI PARA A ESQUERDA
+        else
+        {
+            transform.Translate(-Vector2.right * velocidade * Time.deltaTime);
+        }
+        //O BOTAO ESQUERDO DO MOUSE É PRESSIONADO
+        if (Input.GetMouseButtonDown(0))
+        {
+            vaiParaADireita = !vaiParaADireita;
+        }
+        if (Vector2.Distance(transform.position, pontoDireita.position) < 0.1f)
+        {
+            vaiParaADireita = !vaiParaADireita;
+        }
+        //TESTE
+        if (Vector2.Distance(transform.position, pontoEsquerda.position) < 0.1f)
+        {
+            vaiParaADireita = !vaiParaADireita;
+        }
+
+    }
+    public void OnTriggerEnter2D(Collider2D other)//Leva para a tela de GAME OVER
+    {
+        if (other.CompareTag("Bateu"))
+        {
+            Debug.Log("Bateu");
+            GameOverUm();
+        }
+        if (other.CompareTag("Pegou"))
+        {
+            pontos++;
+            //audioSource.Play();
+            other.gameObject.SetActive(false);
+            audioSource.Play();
+            ContadorDePontos();
+            
+        }
+    }
+    public void ContadorDePontos()
+    {
+        pontosText.text = pontos.ToString();
+    }
+    public void GameOverUm()
+    {
+        SceneManager.LoadScene(GameOver);
+    }
+}
