@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Obstaculo : MonoBehaviour
+{
+    public Rigidbody2D rig;
+    public float velocidade;
+    // Start is called before the first frame update
+    void Start()
+    {
+        transform.Rotate(new Vector3(0, 0, Random.Range(-145, -45)));
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        rig.MovePosition(transform.position + transform.right * velocidade * Time.deltaTime);
+    }
+    //public void OnTriggerEnter2D(Collider2D other)
+    //{
+
+        //if (other.CompareTag("Player"))
+        //{
+            //Debug.Log("Bateu");
+        //}
+        
+    //}
+}
