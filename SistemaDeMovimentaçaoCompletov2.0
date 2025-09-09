@@ -1,0 +1,269 @@
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TMPro;
+
+public class MovimentoDaErica : MonoBehaviour
+{
+    public CharacterController controller;
+    public float velocidadeDaErica = 5;
+    public Animator animator;
+    public Slider sliderVida;
+    //public float vida = 100;
+    public float vidaMaxima = 100;
+    public float vidaAtual;
+    public int chaveA = 0;
+    public int chaveC = 0;
+    public int chaveB = 0;
+    public int energia = 0;
+    public TextMeshProUGUI cronometroText; // Referência ao texto do TextMeshPro
+    public float tempo = 00f;  // Tempo inicial do cronômetro
+    public bool contandoParaFrente = true; // Define se o tempo aumenta ou diminui
+    public float dado;
+    public int tempoParaVencer = 180;
+    public string GameOver;
+    public string cenaMenuVenceu;
+    public bool venceu = false;
+    public string VenceuB;
+    public int tempoAtual = 0;
+    public TextMeshProUGUI jogoSalvoText;
+    public TextMeshProUGUI jogoCarregadoText;
+    public TextMeshProUGUI saveDeletadoText;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        chaveA = 0;
+        chaveC = 0;
+        chaveB = 0;
+        energia = 0;
+        vidaAtual = vidaMaxima; // Corrigido
+        venceu = false;
+        //tempoAtual = tempo;
+       
+    }
+
+    // Update is called once per frame
+    //MOVIMENTACAO DO PERSONAGEM
+    void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        controller.Move(movimento * Time.deltaTime * velocidadeDaErica);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+            Debug.Log("PERDEU VIDA");//Quando o player anda perde vida -
+            PerdeVida(0.5f);//Chama o metodo na animação
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+            Debug.Log("GANHOU VIDA");//Quando o player para de andar ganha vida +
+            GanhaVida(0.5f);//Chama o metodo na animação
+        }
+        Debug.Log("GANHOU VIDA");
+        
+
+        if (contandoParaFrente)
+        {
+            // Cronômetro aumentando
+            tempo += Time.deltaTime;
+        }
+        else
+        {
+            // Cronômetro diminuindo
+            tempo -= Time.deltaTime;
+
+            // Impede que o cronômetro fique negativo
+            if (tempo < 0)
+                tempo = 0;
+        }
+        if (tempo >= tempoParaVencer)//Se tempo for maior ou igual a tempoParaVencer o jogador perde o jogo// -> GAME OVER
+        {
+            Debug.Log("GAME OVER");
+            SceneManager.LoadScene(GameOver);
+        }
+        if (vidaAtual <= 0)//Se vidaAtual for menor ou igual a zero o jogador perde o jogo// -> GAME OVER
+        {
+            SceneManager.LoadScene(GameOver);
+        }
+        
+
+        // Atualiza o texto com o tempo formatado
+        AtualizarTexto();
+        //PerdeVida(1);
+
+        if (Input.GetKeyDown(KeyCode.Z))//Salvar
+        {
+            SalvarJogo();
+        }
+        if (Input.GetKeyDown(KeyCode.X))//Carregar
+        {
+            CarregarJogo();
+        }
+    }
+    public void PerdeVida(float dano)//Perde
+    {
+        vidaAtual -= dano; // Corrigido
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+        AtualizaVida1();
+        Debug.Log("Vida atual: " + vidaAtual);
+        if (vidaAtual <= 0)
+        {
+            Debug.Log("O jogador morreu!");
+            SceneManager.LoadScene(GameOver);
+        }
+    }
+    public void GanhaVida(float ganha)//Ganha
+    {
+        vidaAtual += ganha; // Corrigido
+        vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+        AtualizaVida2();
+        Debug.Log("Vida atual: " + vidaAtual);
+        if (vidaAtual >= 30)
+        {
+            Debug.Log("O jogador foi curado");
+        }
+        if (vidaAtual >= 100)
+        {
+            Debug.Log("O jogador está completamente curado!");
+        }
+    }
+    public void AtualizaVida1()//1
+    {
+        if (sliderVida != null) // Corrigido
+        {
+            sliderVida.value = vidaAtual; // Corrigido
+        }
+    }
+    public void AtualizaVida2()//2
+    {
+        if (sliderVida != null) // Corrigido
+        {
+            sliderVida.value = vidaAtual; // Corrigido
+        }
+    }
+    //INTERACAO COM OS OBJETOS
+    public void OnTriggerEnter(Collider other)
+    {
+        //PEGA CHAVE
+        if (other.CompareTag("PegarChaveA"))//Pega Chave A
+        {
+            chaveA++;
+            other.gameObject.SetActive(false);
+            Debug.Log("Chave A pega com sucesso!");
+        }
+        if (other.CompareTag("PegarChaveC"))//Pega Chave C
+        {
+            chaveC++;
+            other.gameObject.SetActive(false);
+            Debug.Log("Chave C pega com sucesso!");
+        }
+        if (other.CompareTag("PegarChaveB"))//Pega Chave B
+        {
+            chaveB++;
+            other.gameObject.SetActive(false);
+            Debug.Log("Chave B pega com sucesso!");
+        }
+
+        if (other.CompareTag("PegarEnergia"))//Pega Chave B
+        {
+            energia++;
+            other.gameObject.SetActive(false);
+            Debug.Log("Energia pega com sucesso!");
+        }
+        //ABRIR PORTA
+        if (other.CompareTag("AbrirPortaA"))//Abre Porta A
+        {
+            if (chaveA >= 1)
+            {
+                other.gameObject.SetActive(false);
+                Debug.Log("Porta A aberta com sucesso!");
+            }
+        }
+        if (other.CompareTag("AbrirPortaB"))//Abre Porta B
+        {
+            if (chaveB >= 1)
+            {
+                other.gameObject.SetActive(false);
+                Debug.Log("Porta B aberta com sucesso!");
+            }
+        }
+        if (other.CompareTag("AbrirPortaC"))//Abre Porta C
+        {
+            if (chaveC >= 1)
+            {
+                venceu = true;
+                other.gameObject.SetActive(false);
+                Debug.Log("Porta C aberta com sucesso!");
+            }
+        }
+        if (other.CompareTag("Venceu"))//Abre Porta C
+        {
+            if (venceu == true)
+            {
+                other.gameObject.SetActive(false);
+                Debug.Log("VOCE É O NOVO HEROI DO DESAFIO DO LABIRINTO!");
+                SceneManager.LoadScene(VenceuB);
+            }
+        }
+        if (other.CompareTag("GameOver"))//Ganha mais tempo
+        {
+            if (tempo >= 1)
+            {
+                other.gameObject.SetActive(false);
+                Debug.Log("GAME OVER");
+                SceneManager.LoadScene(GameOver);
+            }
+        }
+        // NOVO ITEM → ADICIONA TEMPO
+        if (other.CompareTag("MaisTempo")) // Crie um objeto com essa tag
+        {
+            tempo -= 30f; // adiciona 10 segundos ao cronômetro
+            other.gameObject.SetActive(false);
+            Debug.Log("Item de tempo coletado! +10 segundos");
+            AtualizarTexto();
+        }
+    }
+    public void AlternarContagem()
+    {
+        // Alterna entre aumentar e diminuir o tempo
+        contandoParaFrente = !contandoParaFrente;
+    }
+
+    private void AtualizarTexto()
+    {
+        int minutos = Mathf.FloorToInt(tempo / 60);
+        int segundos = Mathf.FloorToInt(tempo % 60);
+        cronometroText.text = string.Format("{0:00}:{1:00}", minutos, segundos);
+    }
+    public void SalvarJogo()//Salva o jogo
+    {
+        PlayerPrefs.SetFloat("tempo", tempo);
+        PlayerPrefs.SetFloat("posX", transform.position.x);
+        PlayerPrefs.SetFloat("posY", transform.position.y);
+        PlayerPrefs.SetFloat("posZ", transform.position.z);
+        PlayerPrefs.Save();
+        Debug.Log("Jogo salvo com sucesso!");
+    }
+    public void CarregarJogo()//Carrega o jogo
+    {
+        tempo = PlayerPrefs.GetFloat("tempo");
+        float x = PlayerPrefs.GetFloat("posX");
+        float y = PlayerPrefs.GetFloat("posY");
+        float z = PlayerPrefs.GetFloat("posZ");
+        transform.position = new Vector3(x, y, z);
+        Debug.Log("Jogo carregado com sucesso!");
+        AtualizarTexto();
+    }
+    public void DeletarJogo()//Deletar jogo salvo
+    {
+
+    }
+}
