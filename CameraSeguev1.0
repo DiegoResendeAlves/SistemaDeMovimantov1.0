@@ -1,0 +1,26 @@
+using System.Collections.Generic;
+//using UnityEngine;
+
+public class CameraSegue : MonoBehaviour
+{
+    public GameObject player;
+    public Vector3 offset;
+
+    void Start()
+    {
+        // Calcula o offset apenas no eixo Z (se houver profundidade) e mantém a altura (Y) da câmera fixa
+        offset = transform.position - player.transform.position;
+    }
+
+    void LateUpdate()
+    {
+        // Pega a posição atual da câmera
+        Vector3 novaPosicao = transform.position;
+
+        // Atualiza apenas o X para seguir o player
+        novaPosicao.x = player.transform.position.x + offset.x;
+
+        // Mantém o Y e Z originais da câmera
+        transform.position = novaPosicao;
+    }
+}
