@@ -1,0 +1,121 @@
+using System.Collections;
+using System.Collections.Generic;
+//using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+
+public class MovimentoDaErica : MonoBehaviour
+{
+    public CharacterController controller;
+    public Transform myCamera;
+    public Animator animator;
+    public float velocidadeDaErica = 5;
+    public Transform newCameraPosition; // ponto para onde a câmera vai
+    public Transform newCameraPositionB;
+    public Transform newCameraPositionC;
+    public Transform newCameraPositionD;
+    public Transform newCameraPositionE;
+    public Transform newCameraPositionF;
+    public Transform newCameraPositionG;
+    public Transform newCameraPositionH;
+    public Transform newCameraPositionI;
+    public Transform newCameraPositionJ;
+
+    public float transitionSpeed = 5f;  // velocidade da troca (pode ser rápida ou lenta)
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+
+        myCamera = Camera.main.transform;
+        animator = GetComponent<Animator>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        movimento.y = 0;
+        controller.Move(movimento * Time.deltaTime * velocidadeDaErica);
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+            Debug.Log("PERDEU VIDA");//Quando o player anda perde vida -
+            //loadGame = 0;
+            //saveAtivado = 0;
+            //PerdeVida(0.5f);//Chama o metodo na animação
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+            //Debug.Log("GANHOU VIDA");//Quando o player para de andar ganha vida +
+            //GanhaVida(0.5f);//Chama o metodo na animação
+        }
+
+
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("ParaACenaB"))//Camera A
+        {
+            Camera.main.transform.position = newCameraPosition.position;
+            Camera.main.transform.rotation = newCameraPosition.rotation;
+        }
+        if (other.CompareTag("ParaACenaA"))//Camera B
+        {
+            Camera.main.transform.position = newCameraPositionB.position;
+            Camera.main.transform.rotation = newCameraPositionB.rotation;
+        }
+        if (other.CompareTag("ParaACenaC"))//Camera C
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionC.position;
+            Camera.main.transform.rotation = newCameraPositionC.rotation;
+        }
+        if (other.CompareTag("ParaACenaD"))//Camera D
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionD.position;
+            Camera.main.transform.rotation = newCameraPositionD.rotation;
+        }
+        if (other.CompareTag("ParaACenaE"))//Camera E
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionE.position;
+            Camera.main.transform.rotation = newCameraPositionE.rotation;
+        }
+        if (other.CompareTag("ParaACenaF"))//Camera F
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionF.position;
+            Camera.main.transform.rotation = newCameraPositionF.rotation;
+        }
+        if (other.CompareTag("ParaACenaG"))//Camera G
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionG.position;
+            Camera.main.transform.rotation = newCameraPositionG.rotation;
+        }
+        if (other.CompareTag("ParaACenaH"))//Camera H
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionH.position;
+            Camera.main.transform.rotation = newCameraPositionH.rotation;
+        }
+        if (other.CompareTag("ParaACenaI"))//Camera I
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionI.position;
+            Camera.main.transform.rotation = newCameraPositionI.rotation;
+        }
+        if (other.CompareTag("ParaACenaJ"))//Camera J
+        {
+            Debug.Log("OK");
+            Camera.main.transform.position = newCameraPositionJ.position;
+            Camera.main.transform.rotation = newCameraPositionJ.rotation;
+        }
+    }
+}
