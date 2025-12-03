@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MovimentoDaErica : MonoBehaviour
+{
+    public CharacterController controller;
+    public Transform myCamera;
+    public Animator animator;
+    public float velocidadeDaErica = 5;
+
+    public float transitionSpeed = 5f;
+    private Transform targetCameraPos;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        myCamera = Camera.main.transform;
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        controller.Move(movimento * Time.deltaTime * velocidadeDaErica);
+
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+
+        // MOVIMENTO SUAVE DA CÂMERA
+        if (targetCameraPos != null)
+        {
+            myCamera.position = Vector3.Lerp(myCamera.position, targetCameraPos.position, Time.deltaTime * transitionSpeed);
+            myCamera.rotation = Quaternion.Lerp(myCamera.rotation, targetCameraPos.rotation, Time.deltaTime * transitionSpeed);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("CameraPoint"))
+        {
+            targetCameraPos = other.GetComponent<CameraPoint>().cameraPosition;
+        }
+    }
+}
