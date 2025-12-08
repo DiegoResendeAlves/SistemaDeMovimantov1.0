@@ -1,0 +1,105 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MovimentoDaErica : MonoBehaviour
+{
+    public CharacterController controller;
+    public Transform myCamera;
+    public Animator animator;
+    public float velocidadeDaErica = 1;
+
+    public float transitionSpeed = 1f;
+    private Transform targetCameraPos;
+    private object other;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        myCamera = Camera.main.transform;
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 movimento = new Vector3(horizontal, 0, vertical);
+        controller.Move(movimento * Time.deltaTime * velocidadeDaErica);
+
+        if (movimento != Vector3.zero)
+        {
+            animator.SetBool("Andar", true);
+            transform.forward = Vector3.Slerp(transform.forward, movimento, Time.deltaTime * 10);
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+
+        // MOVIMENTO SUAVE DA CÂMERA
+        //if (targetCameraPos != null)
+        //{
+            //myCamera.position = Vector3.Lerp(myCamera.position, targetCameraPos.position, Time.deltaTime * transitionSpeed);
+            //myCamera.rotation = Quaternion.Lerp(myCamera.rotation, targetCameraPos.rotation, Time.deltaTime * transitionSpeed);
+            //myCamera.SetPositionAndRotation(other.transform.position, other.transform.rotation);
+        //}
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        // Indo para a sala
+        if (other.CompareTag("CameraPoint"))//Cozinha para a sala
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+
+        // Voltando para o quarto
+        if (other.CompareTag("CameraPointB"))//Sala para a cozinha
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+        // Indo para a cozinha
+        if (other.CompareTag("CameraPointC"))//Sala para cozinha
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+
+        // Voltando para a sala
+        if (other.CompareTag("CameraPoint"))//Cozinha para a sala
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+        //Indo para o quarto9 B
+        if (other.CompareTag("CameraPointD"))//Cozinha para o quarto B
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+
+        // Voltando para a cozinha
+        if (other.CompareTag("CameraPoint"))//Quarto B para a cozinha
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+        //Indo para o banheiro
+        if (other.CompareTag("CameraPointE"))//Cozinha para o banheiro
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+
+        // Voltando para a cozinha
+        if (other.CompareTag("CameraPoint"))//Banheiro para a cozinha
+        {
+            myCamera.position = other.transform.position;
+            myCamera.rotation = other.transform.rotation;
+        }
+    }
+}
+//}
