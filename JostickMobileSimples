@@ -1,0 +1,60 @@
+using PinePie.SimpleJoystick;
+using System.Collections;
+using PinePie.SimpleJoystick;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+
+public class MoveErica : MonoBehaviour
+{
+    [Header("Referências")]
+    public CharacterController controller;
+    public Animator animator;
+    public JoystickController joystickController;
+
+    [Header("Movimento")]
+    public float velocidadeDaErica = 5f;
+    public float rotacaoSuave = 10f;
+
+    void Start()
+    {
+        // Garante que as referências existem
+        //if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        //if (animator == null)
+            animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        if (joystickController == null) return;
+
+        // Entrada REAL do joystick
+        Vector2 input = joystickController.InputDirection;
+
+        // Converte para 3D (XZ)
+        Vector3 movimento = new Vector3(input.x, 0f, input.y);
+
+        // Move o personagem
+        controller.Move(movimento * velocidadeDaErica * Time.deltaTime);
+
+        // Animação e rotação
+        if (movimento.sqrMagnitude > 0.001f)
+        {
+            animator.SetBool("Andar", true);
+
+            Quaternion rotacaoAlvo = Quaternion.LookRotation(movimento);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                rotacaoAlvo,
+                Time.deltaTime * 10f
+            );
+        }
+        else
+        {
+            animator.SetBool("Andar", false);
+        }
+    }
+}
