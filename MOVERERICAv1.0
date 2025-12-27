@@ -1,0 +1,78 @@
+using UnityEngine;
+
+public class MoveErica : MonoBehaviour
+{
+    public CharacterController controller;
+    public Animator animator;
+    public float velocidadeDaErica = 3f;
+
+    public bool chaveA;
+
+    private InteracaoPorta portaAtual;
+    private GameObject chaveAtual;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        Movimento();
+
+        if (Input.GetKeyDown(KeyCode.E))
+            Interagir();
+    }
+
+    void Movimento()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 dir = new Vector3(h, 0, v);
+        controller.Move(dir * velocidadeDaErica * Time.deltaTime);
+
+        animator.SetBool("Andar", dir.magnitude > 0.1f);
+
+        if (dir != Vector3.zero)
+            transform.forward = dir;
+    }
+
+    void Interagir()
+    {
+        // 🔑 CHAVE
+        if (chaveAtual != null)
+        {
+            chaveA = true;
+            Destroy(chaveAtual);
+            chaveAtual = null;
+            return;
+        }
+
+        // 🚪 PORTA
+        if (portaAtual != null && chaveA)
+        {
+            portaAtual.Interagir();
+            portaAtual = null;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("ChaveA"))
+            chaveAtual = other.gameObject;
+
+        if (other.CompareTag("TriggerPortaA"))
+            portaAtual = other.GetComponent<InteracaoPorta>();
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (chaveAtual != null && other.gameObject == chaveAtual)
+            chaveAtual = null;
+
+        if (portaAtual != null && other.GetComponent<InteracaoPorta>() == portaAtual)
+            portaAtual = null;
+    }
+}
