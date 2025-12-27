@@ -1,0 +1,28 @@
+using UnityEngine;
+
+public class Porta : MonoBehaviour
+{
+    public GameObject modelo;      // mesh da porta
+    public Collider portaFisica;   // box collider que bloqueia
+    public GameObject trigger;     // trigger de interação
+
+    private bool aberta = false;
+
+    public void Abrir()
+    {
+        if (aberta) return;
+        aberta = true;
+
+        // Some o visual
+        if (modelo != null)
+            modelo.SetActive(false);
+
+        // Libera passagem
+        if (portaFisica != null)
+            portaFisica.enabled = false;
+
+        // Desativa interação
+        if (trigger != null)
+            trigger.SetActive(false);
+    }
+}
