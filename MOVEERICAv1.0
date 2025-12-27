@@ -1,0 +1,175 @@
+using UnityEngine;
+
+public class MoveErica : MonoBehaviour
+{
+    public float velocidadeDaErica = 3f;
+    public Animator animator;
+
+    private Rigidbody rb;
+
+    // CHAVES
+    public bool chaveA = false;
+    public bool chaveB = false;
+    public bool chaveC = false;
+
+    private InteracaoPorta portaAtual;
+    private GameObject chaveAtual;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        chaveA = false;
+        chaveB = false;
+        chaveC = false;
+    }
+
+    void Update()
+    {
+        // Animação é ok no Update
+        AtualizarAnimacao();
+
+        if (Input.GetKeyDown(KeyCode.E));
+            //Interagir();
+    }
+
+    void FixedUpdate()
+    {
+        Movimento();
+    }
+
+    void Movimento()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 direcao = new Vector3(h, 0, v).normalized;
+        Vector3 velocidade = direcao * velocidadeDaErica;
+
+        rb.velocity = new Vector3(
+            velocidade.x,
+            rb.velocity.y,
+            velocidade.z
+        );
+
+        if (direcao != Vector3.zero)
+            transform.forward = direcao;
+    }
+
+    void AtualizarAnimacao()
+    {
+        Vector3 velHorizontal = rb.velocity;
+        velHorizontal.y = 0;
+
+        animator.SetBool("Andar", velHorizontal.magnitude > 0.1f);
+    }
+    public void OnTriggerEnter(Collider other)
+    {
+        //Chave C
+        if (other.CompareTag("ChaveC"))////Pega a chave C
+        {
+            chaveC = true;
+            other.gameObject.SetActive(false);
+        }
+
+        //Chave B
+        if (other.CompareTag("ChaveB"))////Pega a chave B
+        {
+            chaveB = true;
+            other.gameObject.SetActive(false);
+        }
+
+        //Chave A
+        if (other.CompareTag("ChaveA"))////Pega a chave A
+        {
+            chaveA = true;
+            other.gameObject.SetActive(false);
+        }
+
+        //Porta C
+        if (other.CompareTag("PortaC"))//Abre a Porta C
+        {
+            if (chaveC == true)
+            {
+                other.gameObject.SetActive(false);
+            }
+        }
+
+        //Porta B
+        if (other.CompareTag("PortaB"))//Abre a Porta B
+        {
+            if (chaveB == true)
+            {
+                other.gameObject.SetActive(false);
+            }
+        }
+
+        //Porta A
+        if (other.CompareTag("PortaA"))//Abre a Porta A
+        {
+            if (chaveA == true)
+            {
+                other.gameObject.SetActive(false);
+            }
+        }
+
+    }
+
+    /*void Interagir()
+    {
+        // 🔑 PEGAR CHAVE
+        if (chaveAtual != null)
+        {
+            if (chaveAtual.CompareTag("ChaveA"))
+                chaveA = true;
+
+            else if (chaveAtual.CompareTag("ChaveB"))
+                chaveB = true;
+
+            else if (chaveAtual.CompareTag("ChaveC"))
+                chaveC = true;
+
+            Destroy(chaveAtual);
+            chaveAtual = null;
+            return;
+        }
+
+        // 🚪 ABRIR PORTA
+        if (portaAtual != null)
+        {
+            if (portaAtual.idPorta == "A" && chaveA ||
+                portaAtual.idPorta == "B" && chaveB ||
+                portaAtual.idPorta == "C" && chaveC)
+            {
+                portaAtual.Interagir();
+                portaAtual = null;
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // CHAVES
+        if (other.CompareTag("ChaveA") ||
+            other.CompareTag("ChaveB") ||
+            other.CompareTag("ChaveC"))
+        {
+            chaveAtual = other.gameObject;
+        }
+
+        // PORTAS
+        if (other.CompareTag("TriggerPorta"))
+        {
+            portaAtual = other.GetComponentInParent<InteracaoPorta>();
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (chaveAtual != null && other.gameObject == chaveAtual)
+            chaveAtual = null;
+
+        if (portaAtual != null && other.GetComponentInParent<InteracaoPorta>() == portaAtual)
+            portaAtual = null;
+    }*/
+}
