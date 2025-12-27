@@ -1,0 +1,13 @@
+using UnityEngine;
+
+public class InteracaoPorta : MonoBehaviour
+{
+    public Porta porta;
+
+    public bool chaveNecessaria;
+
+    public void Interagir()
+    {
+        porta.Abrir();
+    }
+}
