@@ -1,0 +1,20 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class GerenciadorDeFases : MonoBehaviour
+{
+    [Header("Índices das fases no Build Settings")]
+    public int primeiraFase = 1;
+    public int ultimaFase = 10;
+
+    void Start()
+    {
+        SortearFase();
+    }
+
+    void SortearFase()
+    {
+        int faseSorteada = Random.Range(primeiraFase, ultimaFase + 1);
+        SceneManager.LoadScene(faseSorteada);
+    }
+}
