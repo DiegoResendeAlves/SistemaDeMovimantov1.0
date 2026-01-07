@@ -1,0 +1,16 @@
+void SortearFase()
+{
+    int ultimaFase = PlayerPrefs.GetInt("ultimaFase", -1);
+    int faseSorteada;
+
+    do
+    {
+        faseSorteada = Random.Range(primeiraFase, ultimaFase + 1);
+    }
+    while (faseSorteada == ultimaFase);
+
+    PlayerPrefs.SetInt("ultimaFase", faseSorteada);
+    PlayerPrefs.Save();
+
+    SceneManager.LoadScene(faseSorteada);
+}
