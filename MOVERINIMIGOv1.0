@@ -1,0 +1,108 @@
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class MoverInimigo : MonoBehaviour
+{
+    public float velocidadeDaErica = 3f;
+
+    public Animator animator;
+    public Transform player;
+
+    public string GameOver;
+
+    [Header("Detecção")]
+    public float distanciaDeteccao = 5f;
+
+    [Header("Captura")]
+    public float distanciaCaptura = 1.2f;
+
+    [Header("Patrulha")]
+    public Transform[] pontosPatrulha;
+
+    private int pontoAtual = 0;
+
+    private NavMeshAgent agent;
+
+    private bool perseguindo = false;
+
+    void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+
+        // velocidade do agente
+        agent.speed = velocidadeDaErica;
+
+        IrParaProximoPonto();
+    }
+
+    void Update()
+    {
+        if (player == null) return;
+
+        float distancia = Vector3.Distance(transform.position, player.position);
+
+        // Detectou player
+        if (distancia <= distanciaDeteccao)
+        {
+            perseguindo = true;
+        }
+
+        // Perseguir
+        if (perseguindo)
+        {
+            agent.SetDestination(player.position);
+
+            // Game Over
+            if (distancia <= distanciaCaptura)
+            {
+                agent.isStopped = true;
+
+                Debug.Log("GAME OVER");
+
+                SceneManager.LoadScene(GameOver);
+            }
+        }
+        else
+        {
+            Patrulhar();
+        }
+
+        AtualizarAnimacao();
+    }
+
+    void AtualizarAnimacao()
+    {
+        // velocidade do NavMeshAgent
+        float velocidade = agent.velocity.magnitude;
+
+        // ativa animação
+        animator.SetBool("Andar", velocidade > 0.1f);
+    }
+
+    void Patrulhar()
+    {
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            IrParaProximoPonto();
+        }
+    }
+
+    void IrParaProximoPonto()
+    {
+        if (pontosPatrulha.Length == 0) return;
+
+        agent.SetDestination(pontosPatrulha[pontoAtual].position);
+
+        pontoAtual++;
+
+        if (pontoAtual >= pontosPatrulha.Length)
+        {
+            pontoAtual = 0;
+        }
+    }
+}
