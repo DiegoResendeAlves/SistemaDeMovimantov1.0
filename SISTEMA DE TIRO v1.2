@@ -1,0 +1,51 @@
+sing System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Tiro : MonoBehaviour
+{
+    public float velocidade = 10f;
+    public float tempoDeVida = 3f;
+
+    [Header("Som de impacto")]
+    public AudioClip somAcerto;
+    public float volume = 0.15f;
+
+    void Start()
+    {
+        Destroy(gameObject, tempoDeVida);
+    }
+
+    void Update()
+    {
+        transform.position += transform.forward * velocidade * Time.deltaTime;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // Ignora o jogador
+        if (other.CompareTag("Player"))
+            return;
+
+        if (other.CompareTag("Caixa"))
+        {
+            // 🔊 SOM DE ACERTO
+            if (somAcerto != null)
+            {
+                AudioSource.PlayClipAtPoint(somAcerto, transform.position, volume);
+            }
+
+            // procura o script no pai
+            Inimigo inimigo = other.GetComponentInParent<Inimigo>();
+
+            if (inimigo != null)
+            {
+                inimigo.Morrer();
+            }
+
+            Destroy(gameObject); // destrói o tiro
+        }
+        // Destrói o tiro ao bater em qualquer objeto
+        Destroy(gameObject);
+    }
+}
