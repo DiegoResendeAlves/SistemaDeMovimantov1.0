@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpawnDosInimigos : MonoBehaviour
+{
+    public GameObject inimigoPrefab;
+
+    public Transform[] pontosDeSpawn;
+
+    public int quantidadeInicial = 8;
+
+    void Start()
+    {
+        SpawnInicial();
+    }
+
+    void SpawnInicial()
+    {
+        for (int i = 0; i < quantidadeInicial; i++)
+        {
+            int index = Random.Range(0, pontosDeSpawn.Length);
+
+            Instantiate(inimigoPrefab,
+                pontosDeSpawn[index].position,
+                pontosDeSpawn[index].rotation);
+        }
+    }
+}
