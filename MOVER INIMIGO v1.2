@@ -1,0 +1,95 @@
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class MoverInimigo : MonoBehaviour
+{
+    public float velocidadeDaErica = 3f;
+
+    public Animator animator;
+
+    public string GameOver;
+
+    [Header("Patrulha")]
+    public Transform[] pontosPatrulha;
+
+    private int pontoAtual = 0;
+
+    private NavMeshAgent agent;
+
+    void Start()
+    {
+        // Encontra todos os pontos de patrulha
+        GameObject[] pontos = GameObject.FindGameObjectsWithTag("Patrulha");
+
+        pontosPatrulha = new Transform[pontos.Length];
+
+        for (int i = 0; i < pontos.Length; i++)
+        {
+            pontosPatrulha[i] = pontos[i].transform;
+        }
+
+        agent = GetComponent<NavMeshAgent>();
+        agent.speed = velocidadeDaErica;
+
+        if (pontosPatrulha.Length > 0)
+        {
+            pontoAtual = Random.Range(0, pontosPatrulha.Length);
+        }
+
+        IrParaProximoPonto();
+    }
+
+    void Update()
+    {
+        Patrulhar();
+        AtualizarAnimacao();
+    }
+
+    void AtualizarAnimacao()
+    {
+        if (animator == null) return;
+
+        float velocidade = agent.velocity.magnitude;
+        animator.SetBool("Andar", velocidade > 0.1f);
+    }
+
+    void Patrulhar()
+    {
+        if (pontosPatrulha.Length == 0) return;
+
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            IrParaProximoPonto();
+        }
+    }
+
+    void IrParaProximoPonto()
+    {
+        if (pontosPatrulha.Length == 0) return;
+
+        int novoPonto;
+
+        do
+        {
+            novoPonto = Random.Range(0, pontosPatrulha.Length);
+        }
+        while (novoPonto == pontoAtual && pontosPatrulha.Length > 1);
+
+        pontoAtual = novoPonto;
+
+        agent.SetDestination(pontosPatrulha[pontoAtual].position);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            SceneManager.LoadScene(GameOver);
+        }
+    }
+}
