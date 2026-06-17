@@ -1,0 +1,19 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+public class Inimigo : MonoBehaviour
+{
+    public GameObject efeitoMorte; // opcional
+
+    public void Morrer()
+    {
+        if (efeitoMorte != null)
+        {
+            Instantiate(efeitoMorte, transform.position, transform.rotation);
+        }
+
+        Destroy(gameObject);
+    }
+}
